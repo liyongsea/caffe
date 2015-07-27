@@ -466,16 +466,21 @@ vector<int> DataTransformer<Dtype>::InferBlobShape(const Datum& datum) {
   const int datum_channels = datum.channels();
   const int datum_height = datum.height();
   const int datum_width = datum.width();
+  int crop_h= param_.crop_h();
+  int crop_w= param_.crop_w();
+  if (crop_size > 0) {
+    crop_h = crop_w = crop_size;
+  }
   // Check dimensions.
   CHECK_GT(datum_channels, 0);
-  CHECK_GE(datum_height, crop_size);
-  CHECK_GE(datum_width, crop_size);
+  CHECK_GE(datum_height, crop_h);
+  CHECK_GE(datum_width, crop_w);
   // Build BlobShape.
   vector<int> shape(4);
   shape[0] = 1;
   shape[1] = datum_channels;
-  shape[2] = (crop_size)? crop_size: datum_height;
-  shape[3] = (crop_size)? crop_size: datum_width;
+  shape[2] = (crop_h)? crop_h: datum_height;
+  shape[3] = (crop_w)? crop_w: datum_width;
   return shape;
 }
 
@@ -497,16 +502,21 @@ vector<int> DataTransformer<Dtype>::InferBlobShape(const cv::Mat& cv_img) {
   const int img_channels = cv_img.channels();
   const int img_height = cv_img.rows;
   const int img_width = cv_img.cols;
+  int crop_h= param_.crop_h();
+  int crop_w= param_.crop_w();
+  if (crop_size > 0) {
+    crop_h = crop_w = crop_size;
+  }
   // Check dimensions.
   CHECK_GT(img_channels, 0);
-  CHECK_GE(img_height, crop_size);
-  CHECK_GE(img_width, crop_size);
+  CHECK_GE(img_height, crop_h);
+  CHECK_GE(img_width, crop_w);
   // Build BlobShape.
   vector<int> shape(4);
   shape[0] = 1;
   shape[1] = img_channels;
-  shape[2] = (crop_size)? crop_size: img_height;
-  shape[3] = (crop_size)? crop_size: img_width;
+  shape[2] = (crop_h)? crop_h: img_height;
+  shape[3] = (crop_w)? crop_w: img_width;
   return shape;
 }
 
