@@ -1,8 +1,3 @@
-// Make sure we include Python.h before any system header
-// to avoid _POSIX_C_SOURCE redefinition
-#ifdef WITH_PYTHON_LAYER
-#include <boost/python.hpp>
-#endif
 #include <string>
 
 #include "caffe/layer.hpp"
@@ -69,6 +64,47 @@ shared_ptr<Layer<Dtype> > GetPoolingLayer(const LayerParameter& param) {
 }
 
 REGISTER_LAYER_CREATOR(Pooling, GetPoolingLayer);
+
+
+
+
+// Get pooling layer according to engine.
+template <typename Dtype>
+shared_ptr<Layer<Dtype> > GetPoolingSwitchesLayer(const LayerParameter& param) {
+  PoolingParameter_Engine engine = param.pooling_param().engine();
+  if (engine == PoolingParameter_Engine_DEFAULT) {
+    engine = PoolingParameter_Engine_CAFFE;
+  }
+  if (engine == PoolingParameter_Engine_CAFFE) {
+    return shared_ptr<Layer<Dtype> >(new PoolingSwitchesLayer<Dtype>(param));
+  } else {
+    LOG(FATAL) << "Layer " << param.name() << " has unknown engine.";
+  }
+}
+
+REGISTER_LAYER_CREATOR(PoolingSwitches, GetPoolingSwitchesLayer);
+
+
+
+
+
+// Get inv_pooling layer according to engine.
+template <typename Dtype>
+shared_ptr<Layer<Dtype> > GetInvPoolingLayer(const LayerParameter& param) {
+  PoolingParameter_Engine engine = param.pooling_param().engine();
+  if (engine == PoolingParameter_Engine_DEFAULT) {
+    engine = PoolingParameter_Engine_CAFFE;
+  }
+  if (engine == PoolingParameter_Engine_CAFFE) {
+    return shared_ptr<Layer<Dtype> >(new InvPoolingLayer<Dtype>(param));
+  } else {
+    LOG(FATAL) << "Layer " << param.name() << " has unknown engine.";
+  }
+}
+
+REGISTER_LAYER_CREATOR(InvPooling, GetInvPoolingLayer);
+
+
 
 // Get relu layer according to engine.
 template <typename Dtype>
