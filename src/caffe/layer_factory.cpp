@@ -1,3 +1,6 @@
+#ifdef WITH_PYTHON_LAYER                                                                                                                                                                                 
+#include <boost/python.hpp>
+#endif
 #include <string>
 
 #include "caffe/layer.hpp"
